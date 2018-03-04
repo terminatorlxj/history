@@ -1,0 +1,6 @@
+*.cm[ioxa]
+*.o
+sctl
+sctlbcg
+*.a
+*.mli
