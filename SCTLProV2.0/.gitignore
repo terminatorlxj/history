@@ -1,0 +1,15 @@
+*.cm[ioxa]
+*.origin
+.origin
+*.typed
+.typed
+*.conflicts
+*.o
+*.a
+*.cmxa
+sctl2
+sctl2.exe
+*.sql
+./.vscode/*
+log
+.DS_Store
