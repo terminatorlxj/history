@@ -320,7 +320,7 @@ and prove_fairs cont modl =
                 prove_fairs (generate_EX_cont gamma fairs levl x fml1 next contl contr) modl
             | EG (x, fml1, State s) -> 
 				if (levl <> "-1") && (is_in_true_merge s levl modl) then prove_fairs contl modl else
-				if (levl <> "-1") && (is_in_true_merge s levl modl) then prove_fairs contr modl else 
+				if (levl <> "-1") && (is_in_false_merge s levl modl) then prove_fairs contr modl else 
                 if State_set.mem s gamma 
                 then  
                     let is_fair = list_conditional fairs true (fun (e, ss) -> State_set.mem s ss) in
