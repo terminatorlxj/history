@@ -160,6 +160,36 @@ let prove_atomic s sl runtime modul =
 		| _ -> raise (Error_proving_atomic)
 	with Not_found -> print_endline ("definition of atomic function "^s^" is missing."); exit 1
 
+let parse_vmdv_request sid rid rname rargs runtime modul = 
+	begin match rname with
+	| "zone_aircraft_number" -> 
+		let result = Hashtbl.create 1 in
+		let zone = Hashtbl.find rargs "zone" in
+		(* begin match zone with
+		| "holding3_right" ->  *)
+		Hashtbl.iter (fun value sid -> 
+			(* match st with
+			| SVar _ -> print_endline ("Not a state value when parsing vmdv request")
+			| State value -> *)
+				let pats, fun_body = Interp.find_function ("aircraft_number_"^zone) runtime modul in
+				(* let ctx = ref [] in *)
+				let ctx, _ = get_matched_pattern value [(List.nth pats 0, (Int 0))] in begin
+				match evaluate fun_body ctx runtime modul with
+				| VInt i -> 
+					let si = string_of_int i in
+					if Hashtbl.mem result si then
+						Hashtbl.add result si (string_of_int sid)
+					else
+						Hashtbl.replace result si ((Hashtbl.find result si)^","^(string_of_int sid))
+				| v -> print_endline ((Expr.str_value v)^" should be an int value")
+				end
+		) state_tbl;
+		Communicate.response sid rid result
+	| _ -> print_endline ("Unknown vmdv request: "^rname)
+	end
+
+
+
 let rec prove cont runtime modul = 
 	match cont with
 	| Basic b -> b
@@ -324,7 +354,7 @@ let send_state_graph id =
 		List.iter (fun c -> Communicate.add_edge id (string_of_int a) (string_of_int c) "") b
 	) state_struct_tbl
 
-let parse msg = 
+let parse runtime modul msg = 
     match msg with
     | Highlight_node (sid, nid) -> 
 		feedback_ok sid;
@@ -355,6 +385,8 @@ let parse msg =
 		feedback_ok sid;
 		let new_sid = if sid = !proof_session_id then !state_session_id else !proof_session_id in
 		clear_color new_sid
+	| Request (sid, rid, rname, rargs) ->
+		parse_vmdv_request sid rid rname rargs runtime modul
     | _ -> 
         printf "Not supposed to recieve this message %s\n" (str_msg msg);
         flush stdout
@@ -393,7 +425,7 @@ let rec prove_model runtime modul visualize_addr =
 			ignore(Thread.create (fun o -> sending o) o);
 			send_proof_tree s;
 			send_state_graph ("State graph for "^s);
-			receiving i parse
+			receiving i (parse runtime modul)
 			(*Hashtbl.clear sequents; 
 			Hashtbl.clear proof*)
 			);

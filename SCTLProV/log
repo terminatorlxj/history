@@ -1,19 +1,19 @@
 JSON data received:
-{"session_id":"find","type":"highlight_node","node_id":"12"}
+{"session_id":"find","type":"highlight_node","node_id":"5"}
 JSON data received:
 {"session_id":"find","type":"highlight_node","node_id":"17"}
 JSON data received:
-{"session_id":"find","type":"highlight_node","node_id":"38"}
-JSON data received:
 {"session_id":"find","type":"highlight_node","node_id":"0"}
-JSON data received:
-{"session_id":"find","type":"highlight_node","node_id":"5"}
 JSON data received:
 {"session_id":"find","type":"highlight_node","node_id":"21"}
 JSON data received:
+{"session_id":"find","type":"highlight_node","node_id":"28"}
+JSON data received:
+{"session_id":"find","type":"highlight_node","node_id":"38"}
+JSON data received:
 {"session_id":"find","type":"highlight_node","node_id":"34"}
 JSON data received:
-{"session_id":"find","type":"highlight_node","node_id":"28"}
+{"session_id":"find","type":"highlight_node","node_id":"12"}
 t:
 {"type":"add_node","session_id":"find","node":{"id":"1","label":"|- safe({farmer:=false;wolf:=false;goat:=false;cabbage:=false})","state":"Proved"}}
 JSON data sent:
@@ -217,7 +217,7 @@ JSON data sent:
 JSON data sent:
 {"type":"feedback","session_id":"find","status":"OK"}
 JSON data sent:
-{"type":"highlight_node","session_id":"River_Crossing","node_id":"7"}
+{"type":"highlight_node","session_id":"River_Crossing","node_id":"4"}
 JSON data sent:
 {"type":"feedback","session_id":"find","status":"OK"}
 JSON data sent:
@@ -225,15 +225,7 @@ JSON data sent:
 JSON data sent:
 {"type":"feedback","session_id":"find","status":"OK"}
 JSON data sent:
-{"type":"highlight_node","session_id":"River_Crossing","node_id":"11"}
-JSON data sent:
-{"type":"feedback","session_id":"find","status":"OK"}
-JSON data sent:
 {"type":"highlight_node","session_id":"River_Crossing","node_id":"1"}
-JSON data sent:
-{"type":"feedback","session_id":"find","status":"OK"}
-JSON data sent:
-{"type":"highlight_node","session_id":"River_Crossing","node_id":"4"}
 JSON data sent:
 {"type":"feedback","session_id":"find","status":"OK"}
 JSON data sent:
@@ -241,8 +233,16 @@ JSON data sent:
 JSON data sent:
 {"type":"feedback","session_id":"find","status":"OK"}
 JSON data sent:
+{"type":"highlight_node","session_id":"River_Crossing","node_id":"12"}
+JSON data sent:
+{"type":"feedback","session_id":"find","status":"OK"}
+JSON data sent:
+{"type":"highlight_node","session_id":"River_Crossing","node_id":"11"}
+JSON data sent:
+{"type":"feedback","session_id":"find","status":"OK"}
+JSON data sent:
 {"type":"highlight_node","session_id":"River_Crossing","node_id":"14"}
 JSON data sent:
 {"type":"feedback","session_id":"find","status":"OK"}
 JSON data sent:
-{"type":"highlight_node","session_id":"River_Crossing","node_id":"12"}
+{"type":"highlight_node","session_id":"River_Crossing","node_id":"7"}

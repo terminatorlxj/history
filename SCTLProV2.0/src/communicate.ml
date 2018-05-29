@@ -12,6 +12,8 @@ type message =
     | Highlight_node of string * string
     | Unhighlight_node of string * string
     | Clear_color of string
+    | Request of string * string * string * ((string, string) Hashtbl.t)
+    | Response of string * string * ((string, string) Hashtbl.t)
     | Feedback_ok of string
     | Feedback_fail of string * string
 
@@ -27,6 +29,8 @@ let str_msg msg =
     | Highlight_node (sid, nid) -> "Highlight_node ("^sid^", "^nid^")"
     | Unhighlight_node (sid, nid) -> "Unhighlight_node ("^sid^", "^nid^")"
     | Clear_color sid -> "Clear_color "^sid
+    | Request (sid, rid, rname, rargs) -> "Request "^ sid ^", "^ rid^", "^rname^"..."
+    | Response (sid, rid, result) -> "Response "^sid^", "^rid^"..."
     | Feedback_ok sid -> "Feedback_ok "^sid
     | Feedback_fail (sid, error_msg) -> "Feedback_fail ("^sid^", "^error_msg^")"
 
@@ -57,6 +61,8 @@ let change_node_state sid nid state = wait_to_send (Change_node_state (sid, nid,
 let highlight_node sid nid = wait_to_send (Highlight_node (sid, nid))
 let unhighlight_node sid nid = wait_to_send (Unhighlight_node (sid, nid))
 let clear_color sid = wait_to_send (Clear_color sid)
+let request sid rid rname rargs = wait_to_send (Request (sid, rid, rname, rargs))
+let response sid rid result = wait_to_send (Response (sid, rid, result))
 let feedback_ok sid = wait_to_send (Feedback_ok sid)
 let feedback_fail sid error_msg = wait_to_send (Feedback_fail (sid, error_msg))
 
@@ -130,6 +136,25 @@ let json_of_msg (msg:message) =
             ("type", `String "clear_color");
             ("session_id", `String sid)
         ]
+    | Request (sid, rid, rname, rargs) ->
+        let rargs_list = ref [] in
+        Hashtbl.iter (fun k v -> rargs_list := (k, `String v) :: !rargs_list) rargs;
+        `Assoc [
+            ("type", `String "request");
+            ("session_id", `String sid);
+            ("request_id", `String rid);
+            ("request_name", `String rname);
+            ("args", `Assoc !rargs_list)
+        ]
+    | Response (sid, rid, result) ->
+        let result_list = ref [] in
+        Hashtbl.iter (fun k v -> result_list := (k, `String v)::!result_list) result;
+        `Assoc [
+            ("type", `String "response");
+            ("session_id", `String sid);
+            ("request_id", `String rid);
+            ("result", `Assoc !result_list)
+        ]
     | Feedback_ok sid ->
         `Assoc [
             ("type", `String "feedback");
@@ -159,6 +184,14 @@ let get_string_of_json json =
     | `String str -> str
     | _ -> printf "%s is not a string\n" (Yojson.Basic.to_string json); exit 1
 
+let get_hashtbl_of_json json = 
+    match json with
+    | `Assoc kvs -> 
+        let tmp_hashtbl = Hashtbl.create 1 in
+        List.iter (fun (k,v) -> Hashtbl.add tmp_hashtbl k (get_string_of_json v)) kvs;
+        tmp_hashtbl
+    | _ -> printf "%s is not a hashtable\n" (Yojson.Basic.to_string json); exit 1
+
 
 let msg_of_json json = 
     match json with
@@ -182,6 +215,12 @@ let msg_of_json json =
                 Unhighlight_node ((get_string_of_json (get_json_of_key "session_id" str_json_list)), (get_string_of_json (get_json_of_key "node_id" str_json_list)))
             | "clear_color" ->
                 Clear_color (get_string_of_json (get_json_of_key "session_id" str_json_list))
+            | "request" ->
+                let sid = get_string_of_json (get_json_of_key "session_id" str_json_list)
+                and rid = get_string_of_json (get_json_of_key "request_id" str_json_list)
+                and rname = get_string_of_json (get_json_of_key "request_name" str_json_list)
+                and rargs = get_hashtbl_of_json (get_json_of_key "args" str_json_list) in
+                Request (sid, rid, rname, rargs)
             | _ as s -> printf "not supposed to be received by the prover: %s\n" s; exit 1
         end
     | _ -> printf "%s can not be a message\n" (Yojson.Basic.to_string json); exit 1

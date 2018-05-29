@@ -729,6 +729,23 @@ function empty_again this : sca -> bool =
 	length (this.intermediate) = 0 && length (this.final) = 0 &&
 	length (this.runway) = 0
 
+// number of aircraft in each zone
+function aircraft_number_holding3_right this:	sca -> int = length (this.holding3_right)
+function aircraft_number_holding3_left this: 	sca -> int = length (this.holding3_left)
+function aircraft_number_holding2_right this: 	sca -> int = length (this.holding2_right)
+function aircraft_number_holding2_left this: 	sca -> int = length (this.holding2_left)
+function aircraft_number_lez_right this: 		sca -> int = length (this.lez_right)
+function aircraft_number_lez_left this: 		sca -> int = length (this.lez_left)
+function aircraft_number_base_right this: 		sca -> int = length (this.base_right)
+function aircraft_number_base_left this: 		sca -> int = length (this.base_left)
+function aircraft_number_intermediate this: 	sca -> int = length (this.intermediate)
+function aircraft_number_final this: 			sca -> int = length (this.final)
+function aircraft_number_runway this: 			sca -> int = length (this.runway)
+function aircraft_number_maz_right this: 		sca -> int = length (this.maz_right)
+function aircraft_number_maz_left this: 		sca -> int = length (this.maz_left)
+function aircraft_number_departure_right this: 	sca -> int = length (this.departure_right)
+function aircraft_number_departure_left this: 	sca -> int = length (this.departure_left)
+
 Model SATS () 
 {
 	Transition {
