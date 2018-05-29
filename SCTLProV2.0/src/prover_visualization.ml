@@ -177,7 +177,7 @@ let parse_vmdv_request sid rid rname rargs runtime modul =
 				match evaluate fun_body ctx runtime modul with
 				| VInt i -> 
 					let si = string_of_int i in
-					if Hashtbl.mem result si then
+					if not (Hashtbl.mem result si) then
 						Hashtbl.add result si (string_of_int sid)
 					else
 						Hashtbl.replace result si ((Hashtbl.find result si)^","^(string_of_int sid))
