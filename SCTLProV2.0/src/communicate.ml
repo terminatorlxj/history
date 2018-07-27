@@ -13,7 +13,7 @@ type message =
     | Unhighlight_node of string * string
     | Clear_color of string
     | Request of string * string * string * ((string, string) Hashtbl.t)
-    | Response of string * string * ((string, string) Hashtbl.t)
+    | Response of string * string * string * ((string, string) Hashtbl.t)
     | Feedback_ok of string
     | Feedback_fail of string * string
 
@@ -30,7 +30,7 @@ let str_msg msg =
     | Unhighlight_node (sid, nid) -> "Unhighlight_node ("^sid^", "^nid^")"
     | Clear_color sid -> "Clear_color "^sid
     | Request (sid, rid, rname, rargs) -> "Request "^ sid ^", "^ rid^", "^rname^"..."
-    | Response (sid, rid, result) -> "Response "^sid^", "^rid^"..."
+    | Response (sid, rid, rname, result) -> "Response "^sid^", "^rid^", "^rname^"..."
     | Feedback_ok sid -> "Feedback_ok "^sid
     | Feedback_fail (sid, error_msg) -> "Feedback_fail ("^sid^", "^error_msg^")"
 
@@ -62,7 +62,7 @@ let highlight_node sid nid = wait_to_send (Highlight_node (sid, nid))
 let unhighlight_node sid nid = wait_to_send (Unhighlight_node (sid, nid))
 let clear_color sid = wait_to_send (Clear_color sid)
 let request sid rid rname rargs = wait_to_send (Request (sid, rid, rname, rargs))
-let response sid rid result = wait_to_send (Response (sid, rid, result))
+let response sid rid rname result = wait_to_send (Response (sid, rid, rname, result))
 let feedback_ok sid = wait_to_send (Feedback_ok sid)
 let feedback_fail sid error_msg = wait_to_send (Feedback_fail (sid, error_msg))
 
@@ -146,13 +146,14 @@ let json_of_msg (msg:message) =
             ("request_name", `String rname);
             ("args", `Assoc !rargs_list)
         ]
-    | Response (sid, rid, result) ->
+    | Response (sid, rid, rname, result) ->
         let result_list = ref [] in
         Hashtbl.iter (fun k v -> result_list := (k, `String v)::!result_list) result;
         `Assoc [
             ("type", `String "response");
             ("session_id", `String sid);
             ("request_id", `String rid);
+            ("request_name", `String rname);
             ("result", `Assoc !result_list)
         ]
     | Feedback_ok sid ->
@@ -284,7 +285,3 @@ let init ip_addr =
     vin := i;
     vout := o;
     i,o
-
-
-
-

@@ -184,7 +184,7 @@ let parse_vmdv_request sid rid rname rargs runtime modul =
 				| v -> print_endline ((Expr.str_value v)^" should be an int value")
 				end
 		) state_tbl;
-		Communicate.response sid rid result
+		Communicate.response sid rid rname result
 	| _ -> print_endline ("Unknown vmdv request: "^rname)
 	end
 
